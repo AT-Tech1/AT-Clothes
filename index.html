@@ -144,11 +144,20 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 15px;
+            padding: 12px 18px; /* زيادة البادينج عشان يكون سهل الضغط على الموبايل */
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.3s ease;
             flex-shrink: 0;
+            min-width: 48px; /* أدنى عرض للضغط الآمن على الموبايل */
+            min-height: 48px; /* أدنى ارتفاع للضغط الآمن على الموبايل */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .search-bar button i {
+            font-size: 18px;
         }
         
         .search-bar button:hover {
@@ -159,6 +168,12 @@
         .cart-wrapper {
             position: relative;
             cursor: pointer;
+            padding: 10px; /* مساحة إضافية للضغط على الموبايل */
+            min-width: 48px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         #cart-icon {
@@ -942,7 +957,7 @@
             <div class="header-right">
                 <div class="search-bar">
                     <input type="text" id="search-input" placeholder="ابحث عن منتج..." aria-label="ابحث عن منتج">
-                    <button id="search-btn" aria-label="بحث"><i class="fas fa-search"></i></button>
+                    <button id="search-btn" type="button" aria-label="بحث"><i class="fas fa-search"></i></button>
                 </div>
                 
                 <div class="cart-wrapper" id="cart-wrapper">
@@ -950,7 +965,7 @@
                     <span id="cart-count">0</span>
                 </div>
                 
-                <i class="fas fa-bars mobile-menu-icon" id="mobile-menu-toggle" aria-label="قائمة"></i>
+                <i class="fas fa-bars mobile-menu-icon" id="mobile-menu-toggle" aria-label="القائمة"></i>
             </div>
         </div>
     </header>
@@ -1183,38 +1198,44 @@
             }
         });
 
-        // Search - دعم كامل للموبايل (ضغط على الزر أو Enter)
+        // Search - حل نهائي للموبايل
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
 
-        const performSearch = () => {
+        const performSearch = (e) => {
+            // لمنع إرسال الفورم لو كان داخل فورم
+            if (e) e.preventDefault();
+            
             const query = searchInput.value.trim().toLowerCase();
             if (!query) {
                 alert('اكتب كلمة للبحث أولاً!');
                 return;
             }
+            
             const results = products.filter(p => 
                 p.name.toLowerCase().includes(query) || 
                 p.description.toLowerCase().includes(query)
             );
+            
             if (results.length === 0) {
                 alert('لم يتم العثور على أي منتج يطابق بحثك 😔');
             } else {
-                alert(`تم العثور على ${results.length} منتج يطابق "${query}"`);
-                // يمكنك توسيعها لاحقًا لعرض النتائج في الصفحة
+                alert(`تم العثور على ${results.length} منتج يطابق "${query}"\n\nيمكنك رؤية النتائج في الأقسام أو تحسين البحث.`);
             }
         };
 
+        // الضغط على زر البحث
         searchBtn.addEventListener('click', performSearch);
 
-        // البحث عند الضغط على Enter داخل الإنبوت
+        // الضغط على Enter داخل الحقل
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                e.preventDefault();
                 performSearch();
             }
         });
 
-        // Products Data
+        // Products Data (كل المنتجات موجودة)
         const products = [
             // قسم الرجالي
             { category: 'men', id: 1, name: "بدلة سوداء كلاسيك", price: 5499, images: ["https://img-1.kwcdn.com/thumbnail/s/2fe00555dd7ad93bb09315e37f29b01d_e41e0185f705.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/7979ff3f-b3c0-491c-b9ff-e6a2f8027924.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/7979ff3f-b3c0-491c-b9ff-e6a2f8027924.jpg?imageView2/2/w/800/q/70/format/avif"], description: "بدلة إيطالية فاخرة من الصوف النقي.", sizes: ["46", "48", "50", "52"], colors: ["#000000"] },
@@ -1250,6 +1271,7 @@
 
         let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
 
+        // باقي الدوال (نفس اللي قبل كده)
         function displayProductsByCategory(category, containerId) {
             const grid = document.getElementById(containerId);
             grid.innerHTML = '';
@@ -1273,6 +1295,7 @@
         }
 
         function openProductModal(product) {
+            // الكود كامل زي السابق
             document.getElementById('modal-title').textContent = product.name;
             document.getElementById('modal-price').textContent = product.price + ' جنيه';
             document.getElementById('modal-desc').textContent = product.description;
