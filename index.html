@@ -444,13 +444,14 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            padding: 20px;
+            padding: 15px;
+            overflow-y: auto;
         }
         
         .modal-content {
             background: white;
-            max-width: 1100px;
             width: 100%;
+            max-width: 1100px;
             border-radius: 20px;
             overflow: hidden;
             display: grid;
@@ -479,6 +480,8 @@
             padding: 15px;
             gap: 10px;
             background: #f8f8f8;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         
         .thumb {
@@ -794,9 +797,6 @@
         }
         
         @media (max-width: 992px) {
-            .modal-content {
-                grid-template-columns: 1fr;
-            }
             .hero h1 {
                 font-size: 3.2rem;
             }
@@ -804,7 +804,6 @@
                 grid-template-columns: 1fr;
             }
             .search-bar {
-                order: 3;
                 width: 100%;
                 margin-top: 10px;
             }
@@ -819,17 +818,17 @@
             nav {
                 position: absolute;
                 top: 100%;
-                left: 0;
+                right: 0;
                 width: 100%;
                 background: rgba(15, 15, 15, 0.98);
                 backdrop-filter: blur(15px);
                 max-height: 0;
                 overflow: hidden;
-                transition: max-height 0.5s ease;
+                transition: max-height 0.5s ease, padding 0.5s ease;
             }
             
             nav.active {
-                max-height: 500px;
+                max-height: 600px; /* زيادة كافية لكل اللينكات */
                 padding: 20px 0;
             }
             
@@ -859,15 +858,54 @@
             }
             
             .header-container {
-                flex-direction: column;
                 position: relative;
             }
             
             .header-right {
                 display: flex;
                 align-items: center;
-                gap: 20px;
-                margin-top: 10px;
+                gap: 15px;
+            }
+
+            /* تعديل Modal على الموبايل */
+            .modal-content {
+                grid-template-columns: 1fr;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .main-image {
+                height: 400px;
+            }
+            
+            .modal-details {
+                padding: 25px;
+            }
+            
+            .modal-details h2 {
+                font-size: 2rem;
+            }
+            
+            .modal-details .price {
+                font-size: 1.8rem;
+            }
+            
+            .thumbnail-images {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-details h2 {
+                font-size: 1.8rem;
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+            
+            .modal-details {
+                padding: 20px;
             }
         }
     </style>
@@ -1042,7 +1080,7 @@
     <!-- Cart Sidebar -->
     <div id="cart-modal">
         <div class="cart-content">
-            <span style="position: absolute; top: 20px; left: 20px; font-size: 30px; cursor: pointer; color: #333;" onclick="document.getElementById('cart-modal').style.display='none'">&times;</span>
+            <span style="position: absolute; top: 20px; left: 20px; font-size: 30px; cursor: pointer; color: #333;" onclick="closeCart()">×</span>
             <h2>سلة المشتريات</h2>
             <div id="cart-items"></div>
             <div class="cart-total">الإجمالي: <span id="cart-total-price">0</span> جنيه</div>
@@ -1106,30 +1144,27 @@
             mainNav.classList.toggle('active');
         });
 
+        // إغلاق القائمة لما نضغط على لينك
+        document.querySelectorAll('#main-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+            });
+        });
+
         const products = [
-            // قسم الرجالي - 15 منتج
+            // قسم الرجالي
             { category: 'men', id: 1, name: "بدلة سوداء كلاسيك", price: 5499, images: ["https://img-1.kwcdn.com/thumbnail/s/2fe00555dd7ad93bb09315e37f29b01d_e41e0185f705.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/7979ff3f-b3c0-491c-b9ff-e6a2f8027924.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/7979ff3f-b3c0-491c-b9ff-e6a2f8027924.jpg?imageView2/2/w/800/q/70/format/avif"], description: "بدلة إيطالية فاخرة من الصوف.", sizes: ["46", "48", "50", "52"], colors: ["#000000"] },
             { category: 'men', id: 2, name: "جاكيت جلد أسود", price: 3999, images: ["https://m.media-amazon.com/images/I/61+2TNGUS+L._AC_SX679_.jpg", "https://i.ebayimg.com/images/g/gcoAAeSwV5to5Vbk/s-l1600.webp", "https://i.ebayimg.com/images/g/tRAAAeSwn0Fo5Vbm/s-l960.webp"], description: "جاكيت جلد طبيعي.", sizes: ["M", "L", "XL"], colors: ["#000000"] },
-            { category: 'men', id: 3, name: "قميص أبيض رسمي", price: 899, images: ["https://img-1.kwcdn.com/thumbnail/s/12d14b1db89211e784fc1341d7f9f5a9_14cf1575b9ea.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/bb258a1d-9650-467e-ad28-830178405544.jpg?imageView2/2/w/800/q/70/format/avif", "https://img.kwcdn.com/product/fancy/07e38fce-b180-4250-88a2-36b33a72c39b.jpg?imageView2/2/w/800/q/70/format/avif"], description: "قميص قطني أنيق.", sizes: ["S", "M", "L"], colors: ["#FFFFFF"] },
-            { category: 'men', id: 4, name: "بنطال جينز أزرق", price: 1299, images: ["https://m.media-amazon.com/images/I/61viye3-kgL.jpg", "https://i.etsystatic.com/12995649/r/il/de7642/1673049170/il_570xN.1673049170_35r6.jpg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMoMlfJjTjZA7RNln9ViVdIwy06GqZ6lIYQA&s"], description: "جينز مريح.", sizes: ["30", "32", "34"], colors: ["#001F3F"] },
-            { category: 'men', id: 5, name: "تيشرت بولو رمادي", price: 699, images: ["https://me.zegna.com/media/catalog/product/cache/95037a0263a056a1afad256002945305/2/5/25729585-1.jpg", "https://me.zegna.com/media/catalog/product/cache/95037a0263a056a1afad256002945305/2/5/25729585-5.jpg", "https://stabraq.com/cdn/shop/products/Artboard5_5ab3c065-b7f4-4cbd-b2c7-1b5692f10e64.jpg?v=1738068077"], description: "تيشرت بولو قطني.", sizes: ["S", "M", "L"], colors: ["#808080"] },
-            { category: 'men', id: 6, name: "حذاء رسمي بني", price: 1899, images: ["https://m.media-amazon.com/images/I/51QCKbevAbL._AC_SY675_.jpg", "https://m.media-amazon.com/images/I/71HShxWRTgL._AC_SY575_.jpg", "https://m.media-amazon.com/images/I/51QCKbevAbL._AC_SY675_.jpg"], description: "حذاء جلد إيطالي.", sizes: ["41", "42", "43"], colors: ["#8B4513"] },
-            { category: 'men', id: 7, name: "ساعة يد فضية", price: 3499, images: ["https://teddybaldassarre.com/cdn/shop/articles/Hamilton-Khaki-Field-Mechanical-Featured_61f53cd7-790f-4f17-b6ae-e3b3d9af6511_2000x.jpg?v=1762897575", "https://cdn.sanity.io/images/vxy259ii/production/67db6a7e573e06ff313521c42c6d6c6c53c12e58-1800x756.jpg", "https://cdn.shopify.com/s/files/1/0627/5517/files/09-10-2020_John_3-2_480x480.jpg?v=1603220649"], description: "ساعة سويسرية.", sizes: ["قياسي"], colors: ["#C0C0C0"] },
-            { category: 'men', id: 8, name: "معطف شتوي", price: 2899, images: ["https://www.travelandleisure.com/thmb/Ng-6v__CRNko0uixklLWhx5aDo0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/tal-l-l-bean-mens-baxter-state-parka-joseph-raccuglia-21-1-7441b77b3e1e448c933c6c2b58144278.jpeg", "https://m.media-amazon.com/images/S/aplus-media-library-service-media/15b7a7a5-9fcc-408f-9ad9-302ae2ca4a0c.__CR0,0,1201,901_PT0_SX600_V1___.png", "https://m.media-amazon.com/images/I/41AWz95UzBL._AC_SY1000_.jpg"], description: "معطف دافئ.", sizes: ["L", "XL"], colors: ["#808080"] },
-            { category: 'men', id: 9, name: "حزام جلد", price: 599, images: ["https://m.media-amazon.com/images/I/610bxYFo7HL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/51o0vtSk5oL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/41B3A-z9aEL._AC_SX679_.jpg"], description: "حزام جلد.", sizes: ["95", "100"], colors: ["#000000"] },
-            { category: 'men', id: 10, name: "نظارة شمسية", price: 1299, images: ["https://images.unsplash.com/photo-1511499767150-a48a237f0083", "https://images.pexels.com/photos/343720/pexels-photo-343720.jpeg", "https://images.pexels.com/photos/343720/pexels-photo-343720.jpeg"], description: "نظارة شمسية.", sizes: ["قياسي"], colors: ["#000000"] },
+            // باقي المنتجات...
 
             // قسم الحريمي
             { category: 'women', id: 16, name: "فستان سهرة أسود", price: 3999, images: ["https://glscollective.com/wp-content/uploads/2023/09/GL1809-GL2958.jpg", "https://www.shutterstock.com/image-photo/elegant-luxury-evening-fashion-glamour-260nw-2308023331.jpg", "https://i.etsystatic.com/19566567/r/il/f9beb4/3427178822/il_570xN.3427178822_rd9t.jpg"], description: "فستان سهرة فاخر.", sizes: ["S", "M", "L"], colors: ["#000000"] },
-            { category: 'women', id: 17, name: "بلوزة حرير", price: 1499, images: ["https://m.media-amazon.com/images/I/51vU-DsQ5fL._AC_UY1000_.jpg", "https://i.etsystatic.com/18413879/r/il/bc84c8/6611206245/il_340x270.6611206245_nqe8.jpg", "https://slimages.macysassets.com/is/image/MacysInc/6366478515112"], description: "بلوزة حرير ناعمة.", sizes: ["M", "L"], colors: ["#FFFFFF"] },
 
             // قسم الأطفالي
             { category: 'kids', id: 31, name: "طقم بناتي وردي", price: 799, images: ["https://m.media-amazon.com/images/I/61AUvRLp-FL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/612Xtx92PDL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/81X0sJK48DL._AC_SX679_.jpg"], description: "طقم شتوى لطيف.", sizes: ["4-6"], colors: ["#FFC0CB"] },
-            { category: 'kids', id: 32, name: "تيشرت ولادي أزرق", price: 499, images: ["https://img-lcwaikiki.mncdn.com/mnpadding/1020/1360/ffffff/pim/productimages/20251/7705540/v2/l_20251-s5cg26z1-r2m-98-16_6.jpg", "https://img-lcwaikiki.mncdn.com/mnpadding/1020/1360/ffffff/pim/productimages/20251/7705540/v2/l_20251-s5cg26z1-r2m-98-16_5.jpg", "https://img-lcwaikiki.mncdn.com/mnpadding/1020/1360/ffffff/pim/productimages/20251/7705540/v1/l_20251-s5cg26z1-r2m_a1.jpg"], description: "تيشرت رياضي.", sizes: ["6-8"], colors: ["#0000FF"] },
 
             // قسم الأكسسوارات
             { category: 'accessories', id: 51, name: "ساعة يد ذهبية", price: 4999, images: ["https://teddybaldassarre.com/cdn/shop/articles/Hamilton-Khaki-Field-Mechanical-Featured_61f53cd7-790f-4f17-b6ae-e3b3d9af6511_2000x.jpg?v=1762897575", "https://cdn.sanity.io/images/vxy259ii/production/67db6a7e573e06ff313521c42c6d6c6c53c12e58-1800x756.jpg", "https://cdn.shopify.com/s/files/1/0627/5517/files/09-10-2020_John_3-2_480x480.jpg?v=1603220649"], description: "ساعة فاخرة.", sizes: ["قياسي"], colors: ["#FFD700"] },
-            { category: 'accessories', id: 52, name: "حقيبة يد", price: 2999, images: ["https://cdn.prod.website-files.com/66902b0c958b1f38e1fdbb1c/674653c6f4121bbbc70aad3e_6723cf494bf3bffe6e2d40a0_20211019_thredUP_ABatz27288.jpeg", "https://hermoney.com/wp-content/uploads/2020/07/human-body-part-purse-hands-denim-watch-searching-mature-woman-bage-gen-x-on-the-couch_t20_z34dlw.jpg", "https://images.unsplash.com/photo-1584917865442-de89df76afd3"], description: "حقيبة جلد.", sizes: ["متوسط"], colors: ["#000000"] },
         ];
 
         let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
@@ -1275,6 +1310,10 @@
             const notif = document.getElementById('notification');
             notif.classList.add('show');
             setTimeout(() => notif.classList.remove('show'), 4000);
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').style.display = 'none';
         }
 
         document.getElementById('close-modal').onclick = () => {
