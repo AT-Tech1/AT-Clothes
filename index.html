@@ -137,6 +137,7 @@
             width: 100%;
             padding: 10px;
             font-size: 15px;
+            background: transparent;
         }
         
         .search-bar button {
@@ -147,6 +148,7 @@
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.3s ease;
+            flex-shrink: 0;
         }
         
         .search-bar button:hover {
@@ -923,7 +925,7 @@
     <!-- Header -->
     <header>
         <div class="header-container">
-            <img id="logo" src="c.jpg" alt="Fashion Luxe Logo"> <!-- غير الصورة للوجو بتاعك -->
+            <img id="logo" src="c.jpg" alt="Fashion Luxe Logo">
             
             <nav id="main-nav">
                 <ul>
@@ -939,16 +941,16 @@
             
             <div class="header-right">
                 <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="ابحث عن منتج...">
-                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                    <input type="text" id="search-input" placeholder="ابحث عن منتج..." aria-label="ابحث عن منتج">
+                    <button id="search-btn" aria-label="بحث"><i class="fas fa-search"></i></button>
                 </div>
                 
                 <div class="cart-wrapper" id="cart-wrapper">
-                    <i id="cart-icon" class="fas fa-shopping-cart"></i>
+                    <i id="cart-icon" class="fas fa-shopping-cart" aria-label="سلة التسوق"></i>
                     <span id="cart-count">0</span>
                 </div>
                 
-                <i class="fas fa-bars mobile-menu-icon" id="mobile-menu-toggle"></i>
+                <i class="fas fa-bars mobile-menu-icon" id="mobile-menu-toggle" aria-label="قائمة"></i>
             </div>
         </div>
     </header>
@@ -1154,7 +1156,6 @@
             mainNav.classList.toggle('active');
         });
 
-        // Close menu when clicking a link
         document.querySelectorAll('#main-nav a').forEach(link => {
             link.addEventListener('click', () => {
                 mainNav.classList.remove('active');
@@ -1182,9 +1183,36 @@
             }
         });
 
-        // Search
+        // Search - دعم كامل للموبايل (ضغط على الزر أو Enter)
+        const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
-        searchBtn.addEventListener('click', searchProducts);
+
+        const performSearch = () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (!query) {
+                alert('اكتب كلمة للبحث أولاً!');
+                return;
+            }
+            const results = products.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.description.toLowerCase().includes(query)
+            );
+            if (results.length === 0) {
+                alert('لم يتم العثور على أي منتج يطابق بحثك 😔');
+            } else {
+                alert(`تم العثور على ${results.length} منتج يطابق "${query}"`);
+                // يمكنك توسيعها لاحقًا لعرض النتائج في الصفحة
+            }
+        };
+
+        searchBtn.addEventListener('click', performSearch);
+
+        // البحث عند الضغط على Enter داخل الإنبوت
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
 
         // Products Data
         const products = [
@@ -1205,7 +1233,7 @@
             { category: 'women', id: 12, name: "بلوزة حرير بيضاء", price: 1499, images: ["https://m.media-amazon.com/images/I/51vU-DsQ5fL._AC_UY1000_.jpg", "https://i.etsystatic.com/18413879/r/il/bc84c8/6611206245/il_340x270.6611206245_nqe8.jpg", "https://slimages.macysassets.com/is/image/MacysInc/6366478515112"], description: "بلوزة حرير ناعمة ومريحة.", sizes: ["S", "M", "L"], colors: ["#FFFFFF"] },
             { category: 'women', id: 13, name: "جينز أزرق ضيق", price: 1399, images: ["https://m.media-amazon.com/images/I/71gY2G2oX3L._AC_UX679_.jpg", "https://m.media-amazon.com/images/I/81n2mK+7nPL._AC_UX679_.jpg", "https://m.media-amazon.com/images/I/81n2mK+7nPL._AC_UX679_.jpg"], description: "جينز سكيني فيت عالي الجودة.", sizes: ["26", "28", "30", "32"], colors: ["#001F3F"] },
             { category: 'women', id: 14, name: "حذاء كعب عالي أحمر", price: 2199, images: ["https://m.media-amazon.com/images/I/71o9+7B1puL._AC_UY695_.jpg", "https://m.media-amazon.com/images/I/81gK1rG8NVL._AC_UY695_.jpg", "https://m.media-amazon.com/images/I/81gK1rG8NVL._AC_UY695_.jpg"], description: "حذاء كعب عالي أنيق ومريح.", sizes: ["36", "37", "38", "39"], colors: ["#FF0000"] },
-            { category: 'women', id: 15, name: "حقيبة يد جلد بيج", price: 2999, images: ["https://m.media-amazon.com/images/I/71o9+7B1puL._AC_UY695_.jpg", "https://m.media-amazon.com/images/I/81gK1rG8NVL._AC_UY695_.jpg", "https://m.media-amazon.com/images/I/81gK1rG8NVL._AC_UY695_.jpg"], description: "حقيبة يد فاخرة من الجلد الطبيعي.", sizes: ["متوسط"], colors: ["#F5F5DC"] },
+            { category: 'women', id: 15, name: "حقيبة يد جلد بيج", price: 2999, images: ["https://cdn.prod.website-files.com/66902b0c958b1f38e1fdbb1c/674653c6f4121bbbc70aad3e_6723cf494bf3bffe6e2d40a0_20211019_thredUP_ABatz27288.jpeg", "https://hermoney.com/wp-content/uploads/2020/07/human-body-part-purse-hands-denim-watch-searching-mature-woman-bage-gen-x-on-the-couch_t20_z34dlw.jpg", "https://images.unsplash.com/photo-1584917865442-de89df76afd3"], description: "حقيبة يد فاخرة من الجلد الطبيعي.", sizes: ["متوسط"], colors: ["#F5F5DC"] },
 
             // قسم الأطفالي
             { category: 'kids', id: 21, name: "طقم بناتي وردي", price: 799, images: ["https://m.media-amazon.com/images/I/61AUvRLp-FL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/612Xtx92PDL._AC_SX679_.jpg", "https://m.media-amazon.com/images/I/81X0sJK48DL._AC_SX679_.jpg"], description: "طقم شتوي لطيف ودافئ للبنات.", sizes: ["4-6", "6-8", "8-10"], colors: ["#FFC0CB"] },
@@ -1242,17 +1270,6 @@
                 card.addEventListener('click', () => openProductModal(product));
                 grid.appendChild(card);
             });
-        }
-
-        function searchProducts() {
-            const query = document.getElementById('search-input').value.trim().toLowerCase();
-            if (!query) {
-                alert('اكتب كلمة للبحث أولاً!');
-                return;
-            }
-            const results = products.filter(p => p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
-            alert(`تم العثور على ${results.length} منتج يطابق "${query}"`);
-            // يمكنك تطويرها لعرض النتائج في الصفحة بدل الـ alert
         }
 
         function openProductModal(product) {
