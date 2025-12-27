@@ -124,9 +124,9 @@
         .cart-wrapper {
             position: relative;
             cursor: pointer;
-            padding: 10px;
-            min-width: 48px;
-            min-height: 48px;
+            padding: 12px;
+            min-width: 52px;
+            min-height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -820,13 +820,28 @@
                 flex-direction: column;
             }
             
+            /* ترتيب جديد للموبايل: اللوجو في الوسط، والسلة والهامبرجر جنب بعض على اليمين */
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
             .header-right {
                 display: flex;
                 align-items: center;
-                gap: 20px;
+                gap: 25px; /* مسافة مناسبة بين السلة والهامبرجر */
+                margin-top: 10px;
+                order: 3;
+            }
+            
+            #logo {
+                order: 2;
+                margin: 10px 0;
+            }
+            
+            nav {
+                order: 1;
                 width: 100%;
-                justify-content: center;
-                margin-top: 15px;
             }
             
             /* Modal on mobile */
@@ -867,8 +882,7 @@
             }
             
             .header-right {
-                flex-direction: column;
-                gap: 15px;
+                gap: 20px;
             }
         }
     </style>
@@ -1109,17 +1123,19 @@
             });
         });
 
-        // Cart
+        // Cart - حل نهائي للضغط على الموبايل
         const cartWrapper = document.getElementById('cart-wrapper');
         const cartModal = document.getElementById('cart-modal');
         const closeCartBtn = document.getElementById('close-cart');
 
         cartWrapper.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             cartModal.style.display = 'flex';
             renderCartItems();
         });
 
+        // إغلاق السلة عند الضغط على X أو خارجها
         closeCartBtn.addEventListener('click', () => {
             cartModal.style.display = 'none';
         });
